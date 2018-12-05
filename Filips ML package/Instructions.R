@@ -21,9 +21,12 @@
 
 library("devtools")
 library(roxygen2)
-setwd("~/Desktop/Programmeringsprojekt/Machine Learning/Code/Filips ML package/Filips.ML.package")
+
+setwd("/Users/filipcornell/Desktop/Programmeringsprojekt/ML-Implementations/Filips ML package/Filips.ML.package")
 document()
-setwd("~/Desktop/Programmeringsprojekt/Machine Learning/Code/Filips ML package")
+setwd("/Users/filipcornell/Desktop/Programmeringsprojekt/ML-Implementations/Filips ML package")
 install("Filips.ML.package")
 #this.dir <- dirname(parent.frame(2)$ofile) #To set it to source file location
 #setwd(this.dir) #To set it to source file location
+library("Filips.ML.package")
+
