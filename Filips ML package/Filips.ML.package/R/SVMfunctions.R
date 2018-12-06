@@ -1,74 +1,111 @@
 #' Stochastic Gradient Descent
 #'
-#' This function is a very simple implementation of stochastic gradient descent. 
-#' Step size is set to 1/sqrt(t), which is a common stepsize, but one should be able to alter it. This is TBD
+#' This function is a very simple implementation of stochastic gradient descent.
+#' Step size is set to 1/sqrt(t), which is a common stepsize, but one should be able to alter it.
 #' @param wInitVals are the initial values of your vector
-#' @param data is the features, i.e. the X vector. 
+#' @param data is the features, i.e. the X vector.
 #' @param trainLabels is the y vector
 #' @keywords Stochastic Gradient Descent
 #' @export
 #' @examples
-#' 
+#'
 #' trainLabels = y
 #' data = X
 #' w = SGD(rnorm(nrow(data), mean = 0, sd = 1), data, trainLabels = y)
-#' 
+#'
 
 SGD <- function (wInitVals, data, trainLabels) {
   w = as.matrix(wInit)
-  
+
   for (t in 1:nrow(data)) {
     stepSize = 1/sqrt(t)
     w[,1] = w[,1] - stepSize*trainLabels[t]*data[t,]
     w = w*min(1, 1/(t(w)%*%w))
     norm = c(w[2,], - w[1,])
-    
+
     abline(c(norm[2], - norm[1]))
   }
-  return(w) 
+  return(w)
 }
 
+#' cLogT
+#'
+#' Step size function, deciding the learning rate.
+#' Step size is set to 1/log(t), which is a common stepsize, possible to alter through c and power
+#' Return c/(power*log(t)), with default c = 1 and power = 1
+#' @param t is the timestep
+#' @param c is a coefficient to tune with.
+#' @param power is to what power one wants to elevate t to.
+#' @keywords Stepsize, learning rate
+#' @export
+#' @examples
+#'
+#'
+#'
+cDivT = function(t, c = 1, power = 1) {
+  return(c/(power*log(t)))
+}
+
+#' cDivT
+#'
+#' Step size function, deciding the learning rate.
+#' Step size is set to 1/t, which is a common stepsize, possible to alter through c and power
+#' Return c/(t^power), with default c = 1 and power = 1
+#' @param t is the timestep
+#' @param c is a coefficient to tune with.
+#' @param power is to what power one wants to elevate t to.
+#' @keywords Stepsize, learning rate
+#' @export
+#' @examples
+#'
+#'
+#'
+cDivT = function(t, c = 1, power = 1) {
+  return(c/(t^power))
+}
 
 
 #' Perceptron Stochastic Gradient Descent
 #'
-#' This function is a very simple implementation of stochastic gradient descent. 
-#' Step size is set to 1/t, which is a common stepsize, but one should be able to alter it. This is TBD
+#' This function is a very simple implementation of gradient descent in a perceptron.
+#' Step size is set to 1/t, which is a common stepsize, but one should be able to alter it.
 #' @param wInitVals are the initial values of your vector
-#' @param data is the features, i.e. the X vector. 
+#' @param data is the features, i.e. the X vector.
 #' @param trainLabels is the y vector
+#' @param stepSizeFunc is the step size function used.
+#' @param ... is used to be able to specify additional parameters sent in to stepSizeFunc.
 #' @keywords Stochastic Gradient Descent
 #' @export
 #' @examples
-#' 
+#'
 #' trainLabels = y
 #' data = X
 #' w = PerceptronSGD(rnorm(nrow(data), mean = 0, sd = 1), data, trainLabels = y)
-#' 
-PerceptronSGD <- function (wInitVals, data, trainLabels) {
+#'
+PerceptronSGD <- function (wInitVals, data, trainLabels, stepSizeFunc = cDivT, ...) {
   w = matrix(wInitVals, nrow = length(wInitVals), ncol = 1)
-  
+
   for (t in 1:nrow(data)) {
-    
+
     if (trainLabels[t] != sign(w[,1]*data[t,])) {
       stepSize = 1/t
-      w[,1] = w[,1] - stepSize*trainLabels[t]*data[t,]
+      w[,1] = w[,1] - stepSizeFunc(t, ...)*trainLabels[t]*data[t,]
       w = w*min(1, 1/(t(w)%*%w))
     }
   }
-  return(w) 
+  return(w)
 }
 
 #' Adagrad
+#'Implementation of the Adagrad algorithm. Left TBD at the moment.
 #'
-#' TBD
 Adagrad = function(wInitVals, data, labels) {
   return(1)
 }
 
 #' ADAM
+#' Implementation of the ADAM algorithm. Left TBD at the moment.
 #'
-#' TBD
 ADAM = function(wInitVals, data, labels) {
   return(1)
 }
@@ -79,7 +116,7 @@ ADAM = function(wInitVals, data, labels) {
 #'
 #' This function is a very simple implementation of a kernelized perceptron
 #' Step size is set to 1/t, which is a common stepsize, but one should be able to alter it. This is TBD
-#' Currently WAY too slow. No point in even using unless improvements are made. 
+#' Currently WAY too slow. No point in even using unless improvements are made.
 #' @param X is the training set features
 #' @param y_vec is the labels for training set
 #' @param X_test is the test set
@@ -88,12 +125,12 @@ ADAM = function(wInitVals, data, labels) {
 #' @keywords Kernel
 #' @export
 #' @examples
-#' 
-#' 
+#'
+#'
 #send in X matrix being d x n matrix, i.e. dimensions as rows, samples as columns.
 KernelizedPerceptron <- function(X, y_vec, X_test, Y_test, kernel, ...) {
   alphas = matrix(rep(0, ncol(X)), nrow = ncol(X), ncol = 1)
-  
+
   for (t in 1:ncol(X)) {
     stepSize = 1/t
     y_hat = matrix(rep(0, nrow(X)), nrow = nrow(X), ncol = 1)
@@ -101,75 +138,62 @@ KernelizedPerceptron <- function(X, y_vec, X_test, Y_test, kernel, ...) {
       y_hat = y_hat + alphas[j]*y_vec[j]*kernel(X[,t],X[,j], ...)
     }
     y_hat = sign(y_hat)
-    
+
     if (all(y_hat != y_vec[t])) {
-      print("Came in here")
       alphas[t] = alphas[t] + stepSize
     }
   }
-  
-  
   y = rep(0, ncol(X))
-  
+
   #For the test set
-  
+
   for (i in 1:length(y_vec)) {
-    
     for (j in 1:length(y_vec)) {
-      
       y[i] = y[i] + alphas[j]*y_vec[j]*kernel(X[,i],X[,j], ...)
     }
     y[i] = sign(y[i])
   }
-  
+
   print("Accuracy for train is ")
   print(length(y[y == y_vec])/length(y_vec))
-  
+
   y_test = rep(0, length(Y_test))
   for (i in 1:length(Y_test)) {
-    
     for (j in 1:length(y_vec)) {
       y_test[i] = y_test[i] + alphas[j]*y_vec[j]*kernel(X[,j], X_test[,i], ...)
     }
-    
     y_test[i] = sign(y_test[i])
   }
-  
   print("Accuracy for test is ")
   print(length(y_test[y_test == Y_test])/length(Y_test))
-  
   return(alphas)
 }
 
 
-#' Kernelized Perceptron
+#' testSVMaccuracy
 #'
-#' This function is a very simple implementation of a kernelized perceptron
+#' Given you gradient vector and a dataset, test how well it classifies the dataset.
 #' Step size is set to 1/t, which is a common stepsize, but one should be able to alter it. This is TBD
-#' Currently WAY too slow. No point in even using unless improvements are made. 
+#' Currently WAY too slow. No point in even using unless improvements are made.
 #' @param w is the gradient vector
-#' @param test is a frame or matrix with the features.
-#' @param Y_Test are the labels corresponding. 
+#' @param test is a matrix with the features.
+#' @param Y_Test are the labels corresponding.
 #' @keywords SVM
 #' @export
 #' @examples
-#' 
-#' 
-#' 
-#' 
-#' 
+#'
 
 testSVMAccuracy <- function(w, test, Y_Test) {
   w = matrix(w, nrow = length(w), ncol = 1)
   #test the accuracy
   y_new = sign(t(w)%*%t(test))
-  
+  return(length(y_new[y_new == Y_Test])/length(Y_Test))
   amountEq = 0
-  
+
   for (t in 1:ncol(y_new)) {
     if (Y_Test[t] == y_new[,t]) {
       amountEq = amountEq + 1
-    } 
+    }
   }
   return(amountEq/ncol(y_new))
 }
