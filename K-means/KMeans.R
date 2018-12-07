@@ -2,6 +2,14 @@
 library(mvtnorm)
 library(Filips.ML.package)
 
+EuclidDistanceMatrix = function(X, Y) {
+  Xhat = X/sqrt(rowSums(X^2))
+  Yhat = Y/sqrt(rowSums(Y^2))
+  C_matrix = Xhat%*%t(Yhat)
+  return(1 - C_matrix)
+}
+
+
 
 GenerateClusters = function(avgSampPerCluster, clusterVar, nrClusters, featureMins, featureMaxes, seed = 123) {
   
@@ -44,23 +52,62 @@ standardizeDataframe = function(df) {
   return(dataframe)
 }
 
-#Just start simple with this one
-LLoydsAlgorithm = function(initCenters, feats) {
-  
-  #vector keeping hold to which mean each vector is assigned
-  assignment = rep(-1, nrow(feats))
-  
-  
-  
-  #While not converged
-  
-  
-  #Assign each point xi to closest center
-  
-  #Update center as mean of assigned data points
+euclidDistAlgo = function(initCenters, features) {
+  # use euclidian distance!!
 }
 
-KMeansOnline = function(initCenters) {
+
+
+
+#Just start simple with this one
+# features is a data frame with the features 
+LLoydsAlgorithm = function(k, features, seed = 123) {
+  X = as.matrix(features)
+  # N = number of data points in data set.
+  N = nrow(features)
+  # Initialize assignments uniformly at randomly
+  set.seed(seed)
+  assignments = sample(x = seq(1,k,1), replace = TRUE, size = N)
+  # initialize mu based on random assignments
+  mus = apply(as.matrix(seq(1,k,1)), 1, function(k_i, X) {
+    return((1/length(X[assignments == k_i,]))*colSums(X[assignments == k_i,]))
+  }, X)
+  print(mus)
+  #delete this line later
+  points(mus[1,], mus[2,], col = "blue", pch = "X")
+  #While not converged
+    #Assign each point xi to closest center
+    #Update center as mean of assigned data points
+  converged = FALSE
+  count = 0
+  while (converged == FALSE) {
+    converged = TRUE
+    
+    DistanceMatrix = EuclidDistanceMatrix(X, t(mus))
+    for (i in 1:N) {
+      closestMu = which.min(DistanceMatrix[i,])
+      
+      if (closestMu != assignments[i]) {
+        print(i)
+        converged = FALSE
+        assignments[i] = closestMu
+        
+      }
+    }
+    count = count + 1
+    print(count)
+  }
+  
+  # Recalculate mus
+  mus = apply(as.matrix(seq(1,k,1)), 1, function(index) {
+    return((1/nrow(X[assignments == index,]))*colSums(X[assignments == index,]))
+  })
+  points(mus[1,], mus[2,], col = "blue", pch = "X")
+  print("Finished!")
+  return(mus)
+}
+
+KMeansOnline = function(initCenters, features) {
   
 }
 
@@ -70,6 +117,6 @@ samples = GenerateClusters(300, 40, 6, c(-100,-100), c(100,100))
 
 samples = standardizeDataframe(samples)
 
-plot(samples$X1, samples$X2)
+plot(samples$X1, samples$X2, col = "red")
 
-kMeans = LLoydsAlgorithm(rmvnorm(n = 6), samples)
+kMeans = LLoydsAlgorithm(k = 5, samples)

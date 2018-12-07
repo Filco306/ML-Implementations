@@ -28,5 +28,5 @@ setwd("/Users/filipcornell/Desktop/Programmeringsprojekt/ML-Implementations/Fili
 install("Filips.ML.package")
 #this.dir <- dirname(parent.frame(2)$ofile) #To set it to source file location
 #setwd(this.dir) #To set it to source file location
-library("Filips.ML.package")
+#library("Filips.ML.package")
 

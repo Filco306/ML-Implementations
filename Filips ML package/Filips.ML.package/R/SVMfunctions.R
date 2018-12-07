@@ -1,3 +1,24 @@
+
+# Weirdly enough, this function refused to be found. Extremely annoying.
+
+#' EuclidDistanceMatrix
+#'
+#' Returns the distance of two matrices with dimensions N x d and M x d in the shape N x M
+#' @param X is the matrix that will be on the rows in the distance matrix (dim = N x d)
+#' @param Y is the matrix that will be on the columns in the distance matrix (dim = M x d)
+#' @keywords Euclidian, Distance
+#' @examples
+#' DistanceMatrix = EuclidDistanceMatrix(X,Y)
+#'
+#'
+EuclidDistanceMatrix = function(X, Y) {
+  Xhat = X/sqrt(rowSums(X^2))
+  Yhat = Y/sqrt(rowSums(Y^2))
+  C_matrix = Xhat%*%t(Yhat)
+  return(1 - C_matrix)
+}
+
+
 #' Stochastic Gradient Descent
 #'
 #' This function is a very simple implementation of stochastic gradient descent.
