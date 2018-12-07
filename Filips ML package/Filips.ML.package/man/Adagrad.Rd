@@ -2,10 +2,12 @@
 % Please edit documentation in R/SVMfunctions.R
 \name{Adagrad}
 \alias{Adagrad}
-\title{Adagrad}
+\title{Adagrad
+Implementation of the Adagrad algorithm. Left TBD at the moment.}
 \usage{
 Adagrad(wInitVals, data, labels)
 }
 \description{
-TBD
+Adagrad
+Implementation of the Adagrad algorithm. Left TBD at the moment.
 }

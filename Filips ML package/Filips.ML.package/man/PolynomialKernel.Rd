@@ -18,7 +18,7 @@ Returns (1 + x1*x2)^degree for features of any dimension
 }
 \examples{
 
- 
+
 }
 \keyword{Kernel,}
 \keyword{Polynomial}

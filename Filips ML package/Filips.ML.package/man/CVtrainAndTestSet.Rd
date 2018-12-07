@@ -4,10 +4,10 @@
 \alias{CVtrainAndTestSet}
 \title{CVtrainAndTestSet}
 \usage{
-CVtrainAndTestSet(splits, splitIndex)
+CVtrainAndTestSet(splits, splitIndex = -1)
 }
 \arguments{
-\item{splits}{List of partitions of the dataset.}
+\item{splits}{List of partitions of the dataset. Obtained in correct format through function crossValidationSplits.}
 
 \item{splitIndex}{Instructs which partition to take. If it is -1, it will just take a random split. Otherwise, it will take the corresponding index in the list.}
 

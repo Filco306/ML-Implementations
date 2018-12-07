@@ -4,7 +4,7 @@
 \alias{trainTestSplit}
 \title{trainTestSplit}
 \usage{
-trainTestSplit(dataSet, labels, testSetFraction)
+trainTestSplit(dataSet, labels, testSetFraction, seed = 123)
 }
 \arguments{
 \item{dataSet}{is the set of data to split up. Assumes data set does not contain labels but is split up separately.}

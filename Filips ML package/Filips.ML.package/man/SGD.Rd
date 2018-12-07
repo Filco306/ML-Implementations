@@ -14,8 +14,8 @@ SGD(wInitVals, data, trainLabels)
 \item{trainLabels}{is the y vector}
 }
 \description{
-This function is a very simple implementation of stochastic gradient descent. 
-Step size is set to 1/sqrt(t), which is a common stepsize, but one should be able to alter it. This is TBD
+This function is a very simple implementation of stochastic gradient descent.
+Step size is set to 1/sqrt(t), which is a common stepsize, but one should be able to alter it.
 }
 \examples{
 

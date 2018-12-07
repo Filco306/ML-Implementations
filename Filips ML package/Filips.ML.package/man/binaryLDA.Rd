@@ -22,7 +22,6 @@ Does an LDA on a dataset. Returns the classifications of the test set
 }
 \examples{
 
-
 }
 \keyword{LDA,}
 \keyword{binary}

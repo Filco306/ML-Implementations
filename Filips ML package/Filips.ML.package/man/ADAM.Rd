@@ -2,10 +2,12 @@
 % Please edit documentation in R/SVMfunctions.R
 \name{ADAM}
 \alias{ADAM}
-\title{ADAM}
+\title{ADAM
+Implementation of the ADAM algorithm. Left TBD at the moment.}
 \usage{
 ADAM(wInitVals, data, labels)
 }
 \description{
-TBD
+ADAM
+Implementation of the ADAM algorithm. Left TBD at the moment.
 }

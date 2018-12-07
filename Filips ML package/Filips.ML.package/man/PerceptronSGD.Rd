@@ -4,7 +4,7 @@
 \alias{PerceptronSGD}
 \title{Perceptron Stochastic Gradient Descent}
 \usage{
-PerceptronSGD(wInitVals, data, trainLabels)
+PerceptronSGD(wInitVals, data, trainLabels, stepSizeFunc = cDivT, ...)
 }
 \arguments{
 \item{wInitVals}{are the initial values of your vector}
@@ -12,10 +12,14 @@ PerceptronSGD(wInitVals, data, trainLabels)
 \item{data}{is the features, i.e. the X vector.}
 
 \item{trainLabels}{is the y vector}
+
+\item{stepSizeFunc}{is the step size function used.}
+
+\item{...}{is used to be able to specify additional parameters sent in to stepSizeFunc.}
 }
 \description{
-This function is a very simple implementation of stochastic gradient descent. 
-Step size is set to 1/t, which is a common stepsize, but one should be able to alter it. This is TBD
+This function is a very simple implementation of gradient descent in a perceptron.
+Step size is set to 1/t, which is a common stepsize, but one should be able to alter it.
 }
 \examples{
 

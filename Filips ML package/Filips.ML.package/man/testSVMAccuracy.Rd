@@ -2,27 +2,23 @@
 % Please edit documentation in R/SVMfunctions.R
 \name{testSVMAccuracy}
 \alias{testSVMAccuracy}
-\title{Kernelized Perceptron}
+\title{testSVMaccuracy}
 \usage{
 testSVMAccuracy(w, test, Y_Test)
 }
 \arguments{
 \item{w}{is the gradient vector}
 
-\item{test}{is a frame or matrix with the features.}
+\item{test}{is a matrix with the features.}
 
 \item{Y_Test}{are the labels corresponding.}
 }
 \description{
-This function is a very simple implementation of a kernelized perceptron
+Given you gradient vector and a dataset, test how well it classifies the dataset.
 Step size is set to 1/t, which is a common stepsize, but one should be able to alter it. This is TBD
 Currently WAY too slow. No point in even using unless improvements are made.
 }
 \examples{
-
-
-
-
 
 }
 \keyword{SVM}

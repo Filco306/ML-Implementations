@@ -2,14 +2,14 @@
 % Please edit documentation in R/Kernels.R
 \name{GaussianKernel}
 \alias{GaussianKernel}
-\title{Polynomial Kernel}
+\title{Gaussian Kernel}
 \usage{
 GaussianKernel(x1, x2, h)
 }
 \arguments{
-\item{x1}{is the first vector sent in.}
+\item{x1}{is the first datapoint.}
 
-\item{x2}{is the second vector sent in.}
+\item{x2}{is the second datapoint.}
 
 \item{h}{is the variance used in the operation.}
 }
@@ -18,7 +18,7 @@ Returns a gaussian kernel operation
 }
 \examples{
 
- 
+
 }
 \keyword{Gaussian}
 \keyword{Kernel,}
