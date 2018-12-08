@@ -147,3 +147,72 @@ standardizeFeature <- function(feature, mu = NULL, stdDev = NULL) {
 rescaleFeature = function(feature, mu, stdDev) {
   return(stdDev*scaledData + avg)
 }
+
+#' GenerateClusters
+#'
+#' Generates clusters. In other words, generates clusters out of sampling from a normal distribution, in N dimensions. The number in each cluster is also sampled from a normal distribution.
+#'
+#' @param avgSampPerCluster is the expected number of datapoints in one cluster
+#' @param clusterVar is the variance used to sample the number of particles in each cluster.
+#' @param nrClusters is the number of clusters desired.
+#' @param featureMins is an N-dimensional vector, containing the smallest possible value for each feature
+#' @param featuresMaxes is an N-dimensional vector, containing the biggest possible value for each feature
+#' @keywords cluster
+#' @export
+#' @examples
+#'
+#'
+#'
+GenerateClusters = function(avgSampPerCluster, clusterVar, nrClusters, featureMins, featureMaxes, seed = 123) {
+  set.seed(seed)
+  df = data.frame(matrix(rep(0,length(featureMins)), ncol = length(featureMins), nrow = 1))
+  names = colnames(df)
+  for (i in 1:nrClusters) {
+    means = as.numeric()
+    vars = as.numeric()
+    for (j in 1:length(featureMins)) {
+      means[j] = runif(1, min = featureMins[j], max = featureMaxes[j])
+      vars[j] = abs(featureMins[j] - featureMaxes[j])
+    }
+    nrInCluster = floor(rnorm(1, avgSampPerCluster, clusterVar))
+    cluster = rmvnorm(nrInCluster, mean = means, sigma = diag(vars))
+    colnames(cluster) = names
+    df = rbind(df, cluster)
+  }
+  df = df[-c(1),]
+  return(df)
+}
+
+
+
+#' Standardize data
+#'
+#' Standardize all data in a data frame or a matrix that are of type double. Assumes normal distribution on data.
+#'
+#' @param dataIn is a matrix or a dataframe sent in to be standardized.
+#' @param typeOut specifies whether we want a dataframe or matrix out
+#' @keywords cluster
+#' @export
+#' @examples
+#'
+#'
+#'
+standardizeData = function(dataIn, typeOut = "dataframe") {
+
+  names = colnames(dataIn)
+
+  dataframe = apply(dataIn, 2, function(col) {
+    if (typeof(col) == "double") {
+      return(standardizeFeature(col))
+    } else {
+      return(col)
+    }
+
+  })
+
+  if (typeOut == "dataframe") {
+    dataframe = data.frame(dataframe)
+  }
+  colnames(dataframe) = names
+  return(dataframe)
+}

@@ -2,66 +2,13 @@
 library(mvtnorm)
 library(Filips.ML.package)
 
-EuclidDistanceMatrix = function(X, Y) {
-  Xhat = X/sqrt(rowSums(X^2))
-  Yhat = Y/sqrt(rowSums(Y^2))
-  C_matrix = Xhat%*%t(Yhat)
-  return(1 - C_matrix)
-}
-
-
-
-GenerateClusters = function(avgSampPerCluster, clusterVar, nrClusters, featureMins, featureMaxes, seed = 123) {
-  
-  set.seed(seed)
-  
-  df = data.frame(matrix(rep(0,length(featureMins)), ncol = length(featureMins), nrow = 1))
-  names = colnames(df)
-  
-  for (i in 1:nrClusters) {
-    
-    means = as.numeric()
-    vars = as.numeric()
-    for (j in 1:length(featureMins)) {
-      means[j] = runif(1, min = featureMins[j], max = featureMaxes[j])
-      vars[j] = abs(featureMins[j] - featureMaxes[j])
-    }
-    
-    
-    nrInCluster = floor(rnorm(1, avgSampPerCluster, clusterVar))
-    
-    
-    print(nrInCluster)
-    cluster = rmvnorm(nrInCluster, mean = means, sigma = diag(vars))
-    colnames(cluster) = names
-    df = rbind(df, cluster)
-    
-  }
-  
-  df = df[-c(1),]
-  return(df)
-}
-
-standardizeDataframe = function(df) {
-  names = colnames(df)
-  dataframe = data.frame(apply(df, 2, function(col) {
-    return(standardizeFeature(col))
-  }))
-  
-  colnames(dataframe) = names
-  return(dataframe)
-}
-
-euclidDistAlgo = function(initCenters, features) {
-  # use euclidian distance!!
-}
 
 
 
 
-#Just start simple with this one
+# Just start simple with this one
 # features is a data frame with the features 
-LLoydsAlgorithm = function(k, features, seed = 123) {
+KMeansOnline = function(k, features, seed = 123, learnRateThreshold = 10^(-6), learnRateFunc = cDivT, ...) {
   X = as.matrix(features)
   # N = number of data points in data set.
   N = nrow(features)
@@ -69,54 +16,44 @@ LLoydsAlgorithm = function(k, features, seed = 123) {
   set.seed(seed)
   assignments = sample(x = seq(1,k,1), replace = TRUE, size = N)
   # initialize mu based on random assignments
-  mus = apply(as.matrix(seq(1,k,1)), 1, function(k_i, X) {
+  mus = t(apply(as.matrix(seq(1,k,1)), 1, function(k_i, X) {
     return((1/length(X[assignments == k_i,]))*colSums(X[assignments == k_i,]))
-  }, X)
-  print(mus)
-  #delete this line later
-  points(mus[1,], mus[2,], col = "blue", pch = "X")
-  #While not converged
-    #Assign each point xi to closest center
-    #Update center as mean of assigned data points
-  converged = FALSE
-  count = 0
-  while (converged == FALSE) {
-    converged = TRUE
+  }, X))
+  t = 1
+  dataRow = 1
+  while (learnRateFunc(t,...) > learnRateThreshold) {
     
-    DistanceMatrix = EuclidDistanceMatrix(X, t(mus))
-    for (i in 1:N) {
-      closestMu = which.min(DistanceMatrix[i,])
-      
-      if (closestMu != assignments[i]) {
-        print(i)
-        converged = FALSE
-        assignments[i] = closestMu
-        
-      }
+    mu_chosen = which.min(apply(mus, 1, function(mu, dataRow) {
+      return(sum((mu - dataRow)^2))
+    }, X[dataRow,]))
+    oldMu = mus[mu_chosen, ]
+    mus[mu_chosen, ] = oldMu + learnRateFunc(t, ...)*(X[dataRow,] - oldMu)
+    
+    
+    
+    if (dataRow >= nrow(X)) {
+      dataRow = 1
+    } else {
+      dataRow = dataRow + 1
     }
-    count = count + 1
-    print(count)
+    t = t + 1
+    print(learnRateFunc(t,...))
   }
-  
-  # Recalculate mus
-  mus = apply(as.matrix(seq(1,k,1)), 1, function(index) {
-    return((1/nrow(X[assignments == index,]))*colSums(X[assignments == index,]))
-  })
-  points(mus[1,], mus[2,], col = "blue", pch = "X")
-  print("Finished!")
   return(mus)
-}
-
-KMeansOnline = function(initCenters, features) {
-  
 }
 
 #Fix coresets functions
 
-samples = GenerateClusters(300, 40, 6, c(-100,-100), c(100,100))
+samples = GenerateClusters(1000, 40, 10, c(-100,-100, -100), c(100,100, 100), seed = 12)
 
-samples = standardizeDataframe(samples)
+samples = standardizeData(as.matrix(samples), typeIn = "Matrix")
 
+
+
+kMeans = LLoydsAlgorithm(k = 9, samples, convergenceCheckType = "Threshold")
+kMeanOnline = KMeansOnline(k = 9, samples)
 plot(samples$X1, samples$X2, col = "red")
-
-kMeans = LLoydsAlgorithm(k = 5, samples)
+points(kMeans[,1], kMeans[,2], col = "blue", pch = "X")
+points(kMeanOnline[,1], kMeanOnline[,2], col = "green", pch = "X")
+plot(samples$X1, samples$X3, col = "red")
+points(kMeans[,1], kMeans[,3], col = "green", pch = "X")
