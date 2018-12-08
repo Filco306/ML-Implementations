@@ -3,11 +3,38 @@
 \name{ADAM}
 \alias{ADAM}
 \title{ADAM
-Implementation of the ADAM algorithm. Left TBD at the moment.}
+Implementation of the ADAM algorithm. For more info, check out https://arxiv.org/abs/1412.6980}
 \usage{
-ADAM(wInitVals, data, labels)
+ADAM(wInitVals, data, labels, nLoops = 2, alpha = 0.001,
+  beta_1 = 0.9, beta_2 = 0.999, epsilon = 10^(-8))
+}
+\arguments{
+\item{wInitVals}{are the initial values of your vector}
+
+\item{data}{is the features, i.e. the X vector. Send in as Nxd matrix or dataframe.}
+
+\item{labels}{is the y vector}
+
+\item{nLoops}{is the number of times to use each data point. Default set to 2.}
+
+\item{alpha}{is the alpha parameter in the algorithm. In other words, the learning rate.}
+
+\item{beta_1}{is the exponential decay rate for first moment estimates. Set to good default setting.}
+
+\item{beta_2}{is the exponential decay rate for second moment estimates. Set to good default setting.}
+
+\item{epsilon}{is a small number to prevent division by zero. Default set to 10^(-8)}
 }
 \description{
 ADAM
-Implementation of the ADAM algorithm. Left TBD at the moment.
+Implementation of the ADAM algorithm. For more info, check out https://arxiv.org/abs/1412.6980
 }
+\examples{
+
+
+
+
+}
+\keyword{Descent}
+\keyword{Gradient}
+\keyword{Stochastic}

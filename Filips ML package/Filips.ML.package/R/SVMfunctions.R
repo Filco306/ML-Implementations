@@ -16,15 +16,13 @@
 #'
 
 SGD <- function (wInitVals, data, trainLabels) {
-  w = as.matrix(wInit)
+  w = as.matrix(wInitVals)
 
   for (t in 1:nrow(data)) {
     stepSize = 1/sqrt(t)
     w[,1] = w[,1] - stepSize*trainLabels[t]*data[t,]
     w = w*min(1, 1/(t(w)%*%w))
-    norm = c(w[2,], - w[1,])
 
-    abline(c(norm[2], - norm[1]))
   }
   return(w)
 }
@@ -105,12 +103,51 @@ Adagrad = function(wInitVals, data, labels) {
 }
 
 #' ADAM
-#' Implementation of the ADAM algorithm. Left TBD at the moment.
+#' Implementation of the ADAM algorithm. For more info, check out https://arxiv.org/abs/1412.6980
 #'
-ADAM = function(wInitVals, data, labels) {
-  return(1)
-}
+#'
+#' @param wInitVals are the initial values of your vector
+#' @param data is the features, i.e. the X vector. Send in as Nxd matrix or dataframe.
+#' @param labels is the y vector
+#' @param nLoops is the number of times to use each data point. Default set to 2.
+#' @param alpha is the alpha parameter in the algorithm. In other words, the learning rate.
+#' @param beta_1 is the exponential decay rate for first moment estimates. Set to good default setting.
+#' @param beta_2 is the exponential decay rate for second moment estimates. Set to good default setting.
+#' @param epsilon is a small number to prevent division by zero. Default set to 10^(-8)
+#' @keywords Stochastic Gradient Descent
+#' @export
+#' @examples
+#'
+#'
+#'
+#'
+ADAM = function(wInitVals, data, labels, nLoops = 2, alpha = 0.001, beta_1 = 0.9, beta_2 = 0.999, epsilon = 10^(-8)) {
 
+  X = as.matrix(data)
+  nFeatures = ncol(X)
+  N = nrow(X)
+
+  m = rep(0, nFeatures)
+  v = rep(0, nFeatures)
+  w = as.matrix(wInitVals)
+  for (i in 1:nLoops) {
+    for (t in 1:N) {
+
+      if (sum(y[t]*(t(w)%*%as.matrix(X[t,]))) < 1) {
+        g = y[t]*X[t,]
+        old_m = m
+        m = beta_1*old_m + (1 - beta_1)*g
+        old_v = v
+        v = beta_2*old_v + (1 - beta_2)*(g^2)
+        m_hat = m/(1 - beta_1^t)
+        v_hat = v/(1 - beta_2^t)
+        old_w = w
+        w = old_w - alpha*m_hat/(sqrt(v_hat) + epsilon)
+      }
+    }
+  }
+  return(w/sqrt(sum(w^2)))
+}
 
 
 #' Kernelized Perceptron
