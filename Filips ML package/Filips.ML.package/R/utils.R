@@ -223,7 +223,7 @@ standardizeData = function(dataIn, typeOut = "dataframe") {
 #'
 #' @param predictions is the vector of predictions, with true labels sent in as 1, false as 0
 #' @param labels is the vector of actual labels, with true labels sent in as 1, false as 0
-#' @keywords cluster
+#' @keywords TPR
 #' @export
 #' @examples
 #'
@@ -243,7 +243,7 @@ TPR = function(predictions, labels) {
 #'
 #' @param predictions is the vector of predictions, with true labels sent in as 1, false as 0
 #' @param labels is the vector of actual labels, with true labels sent in as 1, false as 0
-#' @keywords cluster
+#' @keywords FPR
 #' @export
 #' @examples
 #'
@@ -261,7 +261,7 @@ FPR = function(predictions, labels) {
 #'
 #' @param TPR is a vector of true positive rates.
 #' @param FPR is a vector of the false positive rates.
-#' @keywords cluster
+#' @keywords AUC
 #' @export
 #' @examples
 #'
@@ -278,4 +278,21 @@ AUC = function(TPR, FPR) {
     area = (x[i]-x[i-1])*(y[i] + y[i-1])/2 + area
   }
   return(area)
+}
+
+
+
+#' Classification rate
+#'
+#' Calculates, out of a confusion matrix, the amount of correctly classified data points.
+#'
+#' @param confMatrix is the confusion matrix to calculate the classification rate for.
+#' @keywords confusion matrix, accuracy
+#' @export
+#' @examples
+#'
+#'
+#'
+classificationRate = function(confMatrix) {
+  return(sum(diag(confMatrix))/sum(confMatrix))
 }

@@ -19,4 +19,4 @@ Calculates the true positive rate, given predictions and labels. Send in labels 
 
 
 }
-\keyword{cluster}
+\keyword{TPR}

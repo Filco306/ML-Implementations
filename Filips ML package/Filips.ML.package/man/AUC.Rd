@@ -19,4 +19,4 @@ Calculates the area under the curve.
 
 
 }
-\keyword{cluster}
+\keyword{AUC}

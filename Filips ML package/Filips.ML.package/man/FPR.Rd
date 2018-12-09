@@ -19,4 +19,4 @@ Calculates the false positive rate, given predictions and labels. Send in labels
 
 
 }
-\keyword{cluster}
+\keyword{FPR}
