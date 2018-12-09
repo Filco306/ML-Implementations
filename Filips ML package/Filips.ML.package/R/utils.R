@@ -216,3 +216,66 @@ standardizeData = function(dataIn, typeOut = "dataframe") {
   colnames(dataframe) = names
   return(dataframe)
 }
+
+#' True positive rate
+#'
+#' Calculates the true positive rate, given predictions and labels. Send in labels and predictions with 1 as true, 0 as false.
+#'
+#' @param predictions is the vector of predictions, with true labels sent in as 1, false as 0
+#' @param labels is the vector of actual labels, with true labels sent in as 1, false as 0
+#' @keywords cluster
+#' @export
+#' @examples
+#'
+#'
+#'
+TPR = function(predictions, labels) {
+  N_plus = sum(labels == 1)
+  labels = as.numeric(labels)
+  return(sum(predictions == 1 & labels == predictions)/N_plus)
+}
+
+
+
+#' True positive rate
+#'
+#' Calculates the false positive rate, given predictions and labels. Send in labels and predictions with 1 as true, 0 as false.
+#'
+#' @param predictions is the vector of predictions, with true labels sent in as 1, false as 0
+#' @param labels is the vector of actual labels, with true labels sent in as 1, false as 0
+#' @keywords cluster
+#' @export
+#' @examples
+#'
+#'
+#'
+FPR = function(predictions, labels) {
+  N_minus = sum(labels == 1)
+  labels = as.numeric(labels)
+  return(sum(predictions == 1 & labels != predictions)/N_minus)
+}
+
+#' Area Under Curve
+#'
+#' Calculates the area under the curve.
+#'
+#' @param TPR is a vector of true positive rates.
+#' @param FPR is a vector of the false positive rates.
+#' @keywords cluster
+#' @export
+#' @examples
+#'
+#'
+#'
+AUC = function(TPR, FPR) {
+  # TPR is y, FPR is x
+  # Order after FPR
+  xInd = order(FPR)
+  x = FPR[xInd]
+  y = TPR[xInd]
+  area = 0
+  for (i in 2:length(TPR)) {
+    area = (x[i]-x[i-1])*(y[i] + y[i-1])/2 + area
+  }
+  return(area)
+}
