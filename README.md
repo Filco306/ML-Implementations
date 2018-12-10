@@ -19,7 +19,7 @@ Implemented so far:
   - Closed form solution
   - Polynomial Regression
 - Some different Kernels 
-- Perception
+- Perceptron
   - Stochastic Gradient Descent
 - Useful functions, such as:
   - Generating cluster data
