@@ -19,7 +19,7 @@ Implemented so far:
   - Closed form solution
   - Polynomial Regression
 - Some different Kernels 
-- Perception
+- Perceptron
   - Stochastic Gradient Descent
 - Useful functions, such as:
   - Generating cluster data
@@ -27,3 +27,5 @@ Implemented so far:
   - Euclidian distance for two matrices
   - Partition and use data k-foldly for cross-validation
   - Standardize data frames and matrices.
+  - Classification rate functions
+  - TPR, FPR and AUC calculations
