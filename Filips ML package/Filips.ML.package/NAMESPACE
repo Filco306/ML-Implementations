@@ -2,7 +2,7 @@
 
 export(ADAM)
 export(AUC)
-export(CVtrainAndTestSet)
+export(CVtrainAndValidationSet)
 export(DiscFunc)
 export(EuclidDistanceMatrix)
 export(FPR)

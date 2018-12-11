@@ -72,9 +72,9 @@ trainTestSplit <- function(dataSet, labels, testSetFraction, seed = 123) {
 }
 
 
-#' CVtrainAndTestSet
+#' CVtrainAndValidationSet
 #'
-#' Returns a training set (k-1 folds) and a test set (1 fold) in a list.
+#' Returns a training set (k-1 folds) and a validation set (1 fold) in a list.
 #'
 #' @param splits List of partitions of the dataset. Obtained in correct format through function crossValidationSplits.
 #' @param splitIndex Instructs which partition to take. If it is -1, it will just take a random split. Otherwise, it will take the corresponding index in the list.
@@ -85,7 +85,7 @@ trainTestSplit <- function(dataSet, labels, testSetFraction, seed = 123) {
 #'
 #'
 #'
-CVtrainAndTestSet <- function(splits, splitIndex = -1) {
+CVtrainAndValidationSet <- function(splits, splitIndex = -1) {
 
 
   if (splitIndex == -1 || splitIndex > length(splits)) {
