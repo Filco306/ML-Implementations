@@ -18,7 +18,7 @@ binaryLDA(x1, x2, priors, test, classifications = c("2", "1"))
 \item{classifications}{are the factor names, sent in as strings}
 }
 \description{
-Does an LDA on a dataset. Returns the classifications of the test set
+Does an LDA on a dataset. Returns the classifications of the test set. Should perhaps be modified to return more information such as decision boundary, covM matrix etc, but left as TBD.
 }
 \examples{
 
