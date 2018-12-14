@@ -29,3 +29,4 @@ Implemented so far:
   - Standardize data frames and matrices.
   - Classification rate functions
   - TPR, FPR and AUC calculations
+- LDA for an arbitrary amount of features and classes. 
