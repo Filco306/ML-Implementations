@@ -30,3 +30,5 @@ Implemented so far:
   - Classification rate functions
   - TPR, FPR and AUC calculations
 - LDA for an arbitrary amount of features and classes. 
+
+And some others I have probably forgotten. 
