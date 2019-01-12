@@ -336,3 +336,18 @@ classificationRate = function(confMatrix) {
 MSE = function(y,y_hat) {
   return(mean((y - y_hat)^2))
 }
+
+#' Get formula
+#'
+#' Returns the formula as a string
+#'
+#' @param response is the name of the
+#' @param feats is a vector containing the names of the features
+#' @keywords error
+#' @export
+#' @examples
+#' get_formula("Fertility", c("Infant.Mortality", "No.In.Household"))
+#' # Will print out "Fertility ~ Infant.Mortality + No.In.Household"
+get_formula = function(response, feats) {
+  f = paste(c(response, paste(best_subset, collapse = ' + ')), collapse = " ~ ")
+}
