@@ -320,3 +320,19 @@ AUC = function(TPR, FPR) {
 classificationRate = function(confMatrix) {
   return(sum(diag(confMatrix))/sum(confMatrix))
 }
+
+#' MSE - Mean Squared Error
+#'
+#' Calculates the mean squared error for predictions.
+#'
+#' @param y is a vector containing the actual response values.
+#' @param y_hat is a vector containing the predictions.
+#' @keywords error
+#' @export
+#' @examples
+#'
+#'
+#'
+MSE = function(y,y_hat) {
+  return(mean((y - y_hat)^2))
+}
