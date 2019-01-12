@@ -12,7 +12,7 @@ TPR(predictions, labels)
 \item{labels}{is the vector of actual labels, with true labels sent in as 1, false as 0}
 }
 \description{
-Calculates the true positive rate, given predictions and labels. Send in labels and predictions with 1 as true, 0 as false.
+Calculates the true positive rate for predictions derived from a probability threshold, given predictions and labels. Send in labels and predictions in factor form.
 }
 \examples{
 

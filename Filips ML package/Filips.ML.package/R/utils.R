@@ -219,7 +219,7 @@ standardizeData = function(dataIn, typeOut = "dataframe") {
 
 #' True positive rate
 #'
-#' Calculates the true positive rate, given predictions and labels. Send in labels and predictions with 1 as true, 0 as false.
+#' Calculates the true positive rate for predictions derived from a probability threshold, given predictions and labels. Send in labels and predictions in factor form.
 #'
 #' @param predictions is the vector of predictions, with true labels sent in as 1, false as 0
 #' @param labels is the vector of actual labels, with true labels sent in as 1, false as 0
@@ -230,16 +230,28 @@ standardizeData = function(dataIn, typeOut = "dataframe") {
 #'
 #'
 TPR = function(predictions, labels) {
-  N_plus = sum(labels == 1)
-  labels = as.numeric(labels)
-  return(sum(predictions == 1 & labels == predictions)/N_plus)
+  y = labels
+  y_hat = predictions
+  conf_m = table(Actual = y, Predicted = y_hat)
+  # True positive rate - true positives divided by all actually being positive
+  if (dim(conf_m)[2] == 1 && levels(labels)[2] %in% y_hat) {
+    return(1) # If we only have good, all are classified as positive correctly (although many are predicted incorrectly) and this is thus 1
+  } else if (dim(conf_m)[2] == 1 && levels(labels)[1] %in% y_hat) {
+    return(0)
+  } else {
+    TP = conf_m[2,2] # True positives
+    N_plus = sum(conf_m[2,])
+    return(TP/N_plus)
+  }
+
 }
+
 
 
 
 #' True positive rate
 #'
-#' Calculates the false positive rate, given predictions and labels. Send in labels and predictions with 1 as true, 0 as false.
+#' Calculates the false positive rate for predictions derived from a probability threshold, given predictions and labels. Send in labels and predictions in factor form.
 #'
 #' @param predictions is the vector of predictions, with true labels sent in as 1, false as 0
 #' @param labels is the vector of actual labels, with true labels sent in as 1, false as 0
@@ -250,10 +262,22 @@ TPR = function(predictions, labels) {
 #'
 #'
 FPR = function(predictions, labels) {
-  N_minus = sum(labels == 1)
-  labels = as.numeric(labels)
-  return(sum(predictions == 1 & labels != predictions)/N_minus)
+  y = labels
+  y_hat = predictions
+  conf_m = table(Actual = y, Predicted = y_hat)
+  # False positive rate - false positives divided by all actually being negative
+  if (dim(conf_m)[2] == 1 && levels(labels)[2] %in% y_hat) {
+    return(1) # If we only have "good", it means all are classified as positive, and the false positives is thus as many as the number of false ones. Thus, the FP/N_minus = 1
+  } else if (dim(conf_m)[2] == 1 && levels(labels)[1] %in% y_hat) {
+    return(0) # If we only have bad, we do not have a single false positive as there are no positives. Hence, 0
+  } else {
+    FP = conf_m[1,2]
+    N_minus = sum(conf_m[1,])
+    return(FP/N_minus)
+  }
+
 }
+
 
 #' Area Under Curve
 #'
