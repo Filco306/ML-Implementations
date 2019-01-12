@@ -351,3 +351,22 @@ MSE = function(y,y_hat) {
 get_formula = function(response, feats) {
   f = paste(c(response, paste(best_subset, collapse = ' + ')), collapse = " ~ ")
 }
+
+#' Holdout method
+#'
+#' Returns a training and a test set.
+#'
+#' @param data is the data to split
+#' @param train_partition is the percentual size of the data set. 0.75 means 75 % of the dataset will be trained on.
+#' @param seed is the seed to set. Default set to NULL
+#' @keywords error
+#' @export
+holdout_method = function(data, train_partition = 0.75, seed = NULL) {
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+  train_ids = sample(1:nrow(data), size = nrow(data)*train_partition, replace = FALSE)
+  train = data[train_ids,]
+  test = data[-train_ids,]
+  return(list(train,test))
+}
