@@ -230,6 +230,13 @@ standardizeData = function(dataIn, typeOut = "dataframe") {
 #'
 #'
 TPR = function(predictions, labels) {
+  if(length(levels(predictions)) == 1) {
+    predictions = as.numeric(predictions)
+    predictions = as.factor(rep(levels(labels)[predictions[1]+1],length(predictions)))
+  } else {
+    levels(predictions) = levels(labels)
+  }
+
   y = labels
   y_hat = predictions
   conf_m = table(Actual = y, Predicted = y_hat)
@@ -262,6 +269,12 @@ TPR = function(predictions, labels) {
 #'
 #'
 FPR = function(predictions, labels) {
+  if(length(levels(predictions)) == 1) {
+    predictions = as.numeric(predictions)
+    predictions = as.factor(rep(levels(labels)[predictions[1]+1],length(predictions)))
+  } else {
+    levels(predictions) = levels(labels)
+  }
   y = labels
   y_hat = predictions
   conf_m = table(Actual = y, Predicted = y_hat)
