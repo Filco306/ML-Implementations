@@ -4,14 +4,14 @@
 \alias{crossValidationSplits}
 \title{crossValidationSplits}
 \usage{
-crossValidationSplits(dataSet, k, seed = 123)
+crossValidationSplits(dataSet, k, seed = NULL)
 }
 \arguments{
 \item{dataSet}{is the set of data to split up into. Make sure samples are the rows and the columns are the features.}
 
 \item{k}{is the number to splits to partition the data into.}
 
-\item{seed}{is the seed used for the randomization}
+\item{seed}{is the seed used for the randomization. Default to null}
 }
 \description{
 Splits the data into k partitions, which can later be used together with the function "CVtrainAndTestSet"

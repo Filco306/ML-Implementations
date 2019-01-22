@@ -5,7 +5,7 @@
 \title{GenerateClusters}
 \usage{
 GenerateClusters(avgSampPerCluster, clusterVar, nrClusters, featureMins,
-  featureMaxes, seed = 123)
+  featureMaxes, seed = NULL)
 }
 \arguments{
 \item{avgSampPerCluster}{is the expected number of datapoints in one cluster}

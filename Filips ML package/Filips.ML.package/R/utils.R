@@ -4,7 +4,7 @@
 #'
 #' @param dataSet is the set of data to split up into. Make sure samples are the rows and the columns are the features.
 #' @param k is the number to splits to partition the data into.
-#' @param seed is the seed used for the randomization
+#' @param seed is the seed used for the randomization. Default to null
 #' @keywords Cross validation
 #' @export
 #' @examples
@@ -12,11 +12,14 @@
 #'
 #'
 
-crossValidationSplits <- function(dataSet, k, seed = 123) {
+crossValidationSplits <- function(dataSet, k, seed = NULL) {
   smp_size = floor(nrow(dataSet)/k)
 
-  ## set the seed to make your partition reproducible
-  set.seed(seed)
+  if (!is.null(seed)) {
+    ## set the seed to make your partition reproducible
+    set.seed(seed)
+  }
+
 
   folds <- list()
 
@@ -44,12 +47,14 @@ crossValidationSplits <- function(dataSet, k, seed = 123) {
 #'
 #'
 
-trainTestSplit <- function(dataSet, labels, testSetFraction, seed = 123) {
+trainTestSplit <- function(dataSet, labels, testSetFraction, seed = NULL) {
 
   smp_size <- floor((1 - testSetFraction) * nrow(dataSet))
 
+  if (!is.null(seed)) {
   ## set the seed to make your partition reproducible
-  set.seed(seed)
+    set.seed(seed)
+  }
   train_ind <- sample(seq_len(nrow(dataSet)), size = smp_size)
 
   train <- dataSet[train_ind, ]
@@ -126,8 +131,6 @@ standardizeFeature <- function(feature, mu = NULL, stdDev = NULL) {
   } else {
     feat = (feature - mu)/stdDev
   }
-
-
   return(feat)
 }
 
@@ -163,8 +166,11 @@ rescaleFeature = function(feature, mu, stdDev) {
 #'
 #'
 #'
-GenerateClusters = function(avgSampPerCluster, clusterVar, nrClusters, featureMins, featureMaxes, seed = 123) {
-  set.seed(seed)
+GenerateClusters = function(avgSampPerCluster, clusterVar, nrClusters, featureMins, featureMaxes, seed = NULL) {
+  if (!is.null(seed)) {
+    set.seed(seed)
+  }
+
   df = data.frame(matrix(rep(0,length(featureMins)), ncol = length(featureMins), nrow = 1))
   names = colnames(df)
   for (i in 1:nrClusters) {
@@ -382,4 +388,71 @@ holdout_method = function(data, train_partition = 0.75, seed = NULL) {
   train = data[train_ids,]
   test = data[-train_ids,]
   return(list(train,test))
+}
+
+#' Classification with loss
+#'
+#' Function used for binary classification to incorporate loss.
+#'
+#' @param FP_punishment is the value in the loss function for all the false positives yielded.
+#' @param FP_punishment is the value in the loss function for all the false negatives yielded.
+#' @param probabilites is a vector or matrix with the probabilities. Can either only be the probabilites for a positive result, or a Nx2 matrix with the probability for a positive classification in the second column.
+#' @keywords loss, matrix, binary, classification
+#' @export
+loss_binary_classification = function(FP_punishment, FN_punishment, probabilities) {
+  if (dim(probabilities)[2] == 2) {
+    probs_positive = probabilities[,2]
+  } else {
+    probs_positive = probabilities
+  }
+  return(apply(as.matrix(probs_positive, 1, function(row) {
+    losses = c(FN_punishment*row, FP_punishment*(1 - row))
+  })))
+}
+
+#' Robustness loss binary classification
+#'
+#' Function used for binary classification to measure quality of the predictions. Gives an indication of the "robustness" of the model, i.e. if the model is in general confident on its predictions or the probabilities are rather centered around 0.5, making it a worse predictive model.
+#'
+#' @param probs_positive are the probabilities for a positive classification result, yielded by the model.
+#' @param y are the actual predictions. Can be sent in as factors, but preferred that they are converted to 1 for positive, 0 for negative.
+#' @keywords loss, robustness, binary, classification
+#' @export
+robust_loss_binary_classification = function(probs_positive, y) {
+  labels = as.numeric(y)
+  y = ifelse(y == max(labels), 1, 0)
+  return(sum(y*log(probs_positive) + (1-y)*log(1 - probs_positive)))
+}
+
+
+#' Neural network (ANN)
+#'
+#' Creates a fully connected ANN which can be trained will be trained with backpropagation.
+#' Not done implemented. Remains TBD.
+#'
+#' @param x are the features used in the neural network. Send in as a matrix or dataframe.
+#' @param y are the response variables.
+#' @param hidden_layers are the hidden layers in the network. Send in a a vector consisting of
+#' @param activation_functions are sent in as a vector of strings, with as many activation functions as layers specified plus 1 for the final layer. If only one activation function is specified, this will be used throughout the whole network. Default is rectified linear units.
+#' @param weights_init vector with initial weights.
+#' @param verbose boolean should be outputted while training. Default set to false.
+#' @param threshold is the threshold of the error when to stop training.
+#' @keywords artificial, neural, network, backpropagation, ANN, backpropagation
+#' @export
+neural_network = function(x, y, hidden_layers, activation_functions = "relu", task = "regression", weights_init = NULL) {
+ x = as.matrix(x)
+ y = as.matrix(y)
+
+ # Calculate the total number of weights. Should be ((nr_feats+1)*nr_neurones_first_layer + (nr_neurones_first_layer+1)*nr_neurones_second_layer) + etc etc
+ nr_weights = 0
+ nr_feats = ncol(x)
+ if (!is.null(weights_init)) {
+   weights = weights_init
+ } else {
+
+ }
+
+
+ # Will return the neural network as an object.
+ return(neural_net)
 }
