@@ -456,3 +456,43 @@ neural_network = function(x, y, hidden_layers, activation_functions = "relu", ta
  # Will return the neural network as an object.
  return(neural_net)
 }
+
+#' Substitute values
+#'
+#' Substitutes values in a column with other given values.
+#' @param column is the vector of values from which the values should be replaced.
+#' @param ranking are the values that are to be replaced in column. Should contain all possible values in the matrix.
+#' @param corresponding are the corresponding values that replaces the values given in ranking. Order is important.
+#' @param null_val is a value given as to what replace null values with.
+#' @keywords data, manipulation
+#' @export
+substitute_values = function(column, ranking, corresponding, null_val = NULL) {
+  return(apply(as.matrix(column), 1, function(val) {
+    if(is.na(val)) {
+      return(null_val)
+    } else {
+      return(corresponding[which(ranking == val)])
+    }
+  }))
+}
+
+#' Create dummy variables
+#'
+#' Creates dummy variables for a specific column in a data frame.
+#' @param data is the data frame (send in the whole data frame)
+#' @param col_name is the name of the column, given as a string. It can also be given as an index.
+#' @keywords dummy, data, manipulation
+#' @export
+create_dummy_vars = function(data, col_name) {
+  col = data[, col_name]
+  l = levels(col)
+  # Create dummy var matrix
+  dummy_vars = matrix(NA, nrow = length(col), ncol = length(l))
+  colnames(dummy_vars) = l
+  for (i in 1:length(l)) {
+    dummy_vars[,i] = as.integer(ifelse(as.character(col) == l[i], 1, 0))
+  }
+  dummy_vars[is.na(dummy_vars)] = 0
+  data = cbind(data[, !(colnames(data) %in% col_name)], data.frame(dummy_vars))
+  return(data)
+}
