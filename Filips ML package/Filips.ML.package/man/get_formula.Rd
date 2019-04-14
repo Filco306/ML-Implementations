@@ -4,12 +4,12 @@
 \alias{get_formula}
 \title{Get formula}
 \usage{
-get_formula(response, feats)
+get_formula(response, features)
 }
 \arguments{
 \item{response}{is the name of the}
 
-\item{feats}{is a vector containing the names of the features}
+\item{features}{is a vector containing the names of the features}
 }
 \description{
 Returns the formula as a string

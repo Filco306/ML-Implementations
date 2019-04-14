@@ -12,7 +12,7 @@ neural_network(x, y, hidden_layers, activation_functions = "relu",
 
 \item{y}{are the response variables.}
 
-\item{hidden_layers}{are the hidden layers in the network. Send in a a vector consisting of}
+\item{hidden_layers}{are the hidden layers in the network. Send in as a vector consisting of numbers, declaring the number of neurones in each hidden layer.}
 
 \item{activation_functions}{are sent in as a vector of strings, with as many activation functions as layers specified plus 1 for the final layer. If only one activation function is specified, this will be used throughout the whole network. Default is rectified linear units.}
 
