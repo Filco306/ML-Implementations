@@ -1,11 +1,11 @@
 
 #' Stochastic Gradient Descent
 #'
-#' This function is a very simple implementation of stochastic gradient descent.
+#' This function is a very simple implementation of stochastic gradient descent, used for SVM:s.
 #' Step size is set to 1/sqrt(t), which is a common stepsize, but one should be able to alter it.
 #' @param wInitVals are the initial values of your vector
 #' @param data is the features, i.e. the X vector.
-#' @param trainLabels is the y vector
+#' @param y is the y vector, with labels
 #' @keywords Stochastic Gradient Descent
 #' @export
 #' @examples
@@ -15,12 +15,12 @@
 #' w = SGD(rnorm(nrow(data), mean = 0, sd = 1), data, trainLabels = y)
 #'
 
-SGD <- function (wInitVals, data, trainLabels) {
+SGD_SVM <- function (wInitVals, data, y) {
   w = as.matrix(wInitVals)
 
   for (t in 1:nrow(data)) {
     stepSize = 1/sqrt(t)
-    w[,1] = w[,1] - stepSize*trainLabels[t]*data[t,]
+    w[,1] = w[,1] - stepSize*y[t]*data[t,]
     w = w*min(1, 1/(t(w)%*%w))
 
   }
@@ -41,7 +41,7 @@ SGD <- function (wInitVals, data, trainLabels) {
 #'
 #'
 #'
-cDivT = function(t, c = 1, power = 1) {
+cDivLogT = function(t, c = 1, power = 1) {
   return(c/(power*log(t)))
 }
 
