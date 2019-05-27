@@ -15,6 +15,6 @@ MASE(y, y_hat)
 Calculates the MASE value for predictions. The MASE value can be calculated as \deqn{(\Sigma |y[i] - y_hat[i]|)/(\Sigma |y_[t] - y[t-1]|)}
 }
 \details{
-Due to the equation of the MASE, the prediction for the first point is not included. 
+Due to the equation of the MASE, the prediction for the first point is not included.
 NOT tested yet!
 }

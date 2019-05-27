@@ -4,9 +4,11 @@
 \alias{P_G_Kernel}
 \title{Periodic + Gaussian Kernel}
 \usage{
-P_G_Kernel(x1, x2, l1, l2, d)
+P_G_Kernel(sigmaF = 1, x1, x2, l1, l2, d)
 }
 \arguments{
+\item{sigmaF}{is the constant before.}
+
 \item{x1}{is the first datapoint.}
 
 \item{x2}{is the second datapoint.}
@@ -18,11 +20,7 @@ P_G_Kernel(x1, x2, l1, l2, d)
 \item{d}{is for the periodic kernel.}
 }
 \description{
-Returns a mix of a periodic and a gaussian kernel.
-}
-\examples{
-
-
+Returns a mix of a periodic and a gaussian kernel. This kernel will be \deqn{(sigmaF^2)*exp(-2*((sin(pi*abs(x1-x2)/d)^2)/(l1^2)))*exp(-0.5*((x1 - x2)^2)/(l2^2))}
 }
 \keyword{Gaussian}
 \keyword{Kernel,}

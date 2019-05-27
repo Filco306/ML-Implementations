@@ -12,8 +12,6 @@ MSE(y, y_hat)
 \item{y}{is a vector containing the actual response values.}
 
 \item{y_hat}{is a vector containing the predictions.}
-
-\item{y_true}{}
 }
 \description{
 Returns the MSE, given true and predicted values.

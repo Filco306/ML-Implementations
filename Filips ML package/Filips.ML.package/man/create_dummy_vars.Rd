@@ -4,15 +4,17 @@
 \alias{create_dummy_vars}
 \title{Create dummy variables}
 \usage{
-create_dummy_vars(data, col_name)
+create_dummy_vars(data, col_name, NA_val = NA)
 }
 \arguments{
 \item{data}{is the data frame (send in the whole data frame)}
 
 \item{col_name}{is the name of the column, given as a string. It can also be given as an index.}
+
+\item{NA_val}{is what to impute on the NA values. Default NA (no imputation made).}
 }
 \description{
-Creates dummy variables for a specific column in a data frame.
+Creates dummy variables for a specific column in a data frame. Returns a data frame with the old column gone and a new with all the dummy variables.
 }
 \keyword{data,}
 \keyword{dummy,}

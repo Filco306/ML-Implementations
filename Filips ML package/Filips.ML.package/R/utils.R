@@ -27,12 +27,12 @@ crossValidationSplits <- function(dataSet, k, seed = NULL) {
     folds[[i]] = data.frame(dataSet[newFold,])
     dataSet <- dataSet[-newFold,]
   }
-  
-  # If there are still samples left in the original dataset. 
-  if (nrow(dataSet) != 0) { 
+
+  # If there are still samples left in the original dataset.
+  if (nrow(dataSet) != 0) {
     folds[[i]] = rbind(folds[[i]], dataSet)
   }
-  
+
   return(folds)
 
 }
@@ -437,7 +437,7 @@ robust_loss_binary_classification = function(probs_positive, y) {
 #'
 #' @param x are the features used in the neural network. Send in as a matrix or dataframe.
 #' @param y are the response variables.
-#' @param hidden_layers are the hidden layers in the network. Send in as a vector consisting of numbers, declaring the number of neurones in each hidden layer. 
+#' @param hidden_layers are the hidden layers in the network. Send in as a vector consisting of numbers, declaring the number of neurones in each hidden layer.
 #' @param activation_functions are sent in as a vector of strings, with as many activation functions as layers specified plus 1 for the final layer. If only one activation function is specified, this will be used throughout the whole network. Default is rectified linear units.
 #' @param weights_init vector with initial weights.
 #' @param verbose boolean should be outputted while training. Default set to false.
@@ -483,12 +483,13 @@ substitute_values = function(column, ranking, corresponding, null_val = NULL) {
 
 #' Create dummy variables
 #'
-#' Creates dummy variables for a specific column in a data frame.
+#' Creates dummy variables for a specific column in a data frame. Returns a data frame with the old column gone and a new with all the dummy variables.
 #' @param data is the data frame (send in the whole data frame)
 #' @param col_name is the name of the column, given as a string. It can also be given as an index.
+#' @param NA_val is what to impute on the NA values. Default NA (no imputation made).
 #' @keywords dummy, data, manipulation
 #' @export
-create_dummy_vars = function(data, col_name) {
+create_dummy_vars = function(data, col_name, NA_val = NA) {
   col = data[, col_name]
   l = levels(col)
   # Create dummy var matrix
@@ -497,44 +498,46 @@ create_dummy_vars = function(data, col_name) {
   for (i in 1:length(l)) {
     dummy_vars[,i] = as.integer(ifelse(as.character(col) == l[i], 1, 0))
   }
-  dummy_vars[is.na(dummy_vars)] = 0
+  if (!is.na(NA_val)) {
+    dummy_vars[is.na(dummy_vars)] = NA_val
+  }
   data = cbind(data[, !(colnames(data) %in% col_name)], data.frame(dummy_vars))
   return(data)
 }
 
-#' K-fold cross-validation 
-#' 
-#' Performs cross-validation on an arbitrary model in an arbitrary way. 
-#' 
-#' By default, if \code{fold_indices = NULL}, k-fold-CV is performed. 
-#' 
-#' Not tested yet. 
-#' @param model is the model function sent in onto which the cross-validation should be performed. 
+#' K-fold cross-validation
+#'
+#' Performs cross-validation on an arbitrary model in an arbitrary way.
+#'
+#' By default, if \code{fold_indices = NULL}, k-fold-CV is performed.
+#'
+#' Not tested yet.
+#' @param model is the model function sent in onto which the cross-validation should be performed.
 #' @param data is the data given to split up
-#' @param error_measure_function is the error function with which one measures the generalization error. 
-#' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed. 
-#' @param target is the name of the target variable. Is NULL by default under assumption that formula exists. 
-#' @param predictors is a vector of the names of the predictors. Is NULL by default under assumption that formula exists. 
+#' @param error_measure_function is the error function with which one measures the generalization error.
+#' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed.
+#' @param target is the name of the target variable. Is NULL by default under assumption that formula exists.
+#' @param predictors is a vector of the names of the predictors. Is NULL by default under assumption that formula exists.
 #' @param fold_indices is a list of fold indices. Default is \code{NULL}, meaning that the partitioning will be randomized into \code{n_folds}.
-#' @param n_folds is the number of folds to divide. 
-#' @param ... are additional model parameters. 
+#' @param n_folds is the number of folds to divide.
+#' @param ... are additional model parameters.
 #' @export
 k_fold_cv = function(model, data, error_measure_function, formula_ = NULL, target = NULL, predictors = NULL, fold_indices = NULL, n_folds = 5, seed = 123, ...) {
-  
-  
-  
+
+
+
   if (is.null(fold_indices)) {
     # Then we create the folds!
     data_splits = crossValidationSplits(data, k = n_folds, seed = seed)
-    
+
   }
-  
+
   error = as.numeric()
   for (i in 1:n_folds) {
     train_validation = CVtrainAndValidationSet(data_splits, splitIndex = i)
     train = train_validation[[1]]
     validation = train_validation[[2]]
-    
+
     if (!is.null(formula_)) {
       fit = model(formula_, train,...)
       error[i] = error_measure_function(validation[,target],predict(fit,validation))
@@ -542,47 +545,47 @@ k_fold_cv = function(model, data, error_measure_function, formula_ = NULL, targe
       fit = model(x=train[,predictors],y=train[,target],...)
       error[i] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
     }
-    
+
   }
-  
+
   cv_results = list()
   if (!is.null(formula_)) {
     cv_results$formula = formula_
   } else {
     cv_results$formula = get_formula(target, predictors)
   }
-  
+
   cv_results$error = error
   cv_results$avg_error = mean(error)
   cv_results$folds = data_splits
-  
+
   return(cv_results)
 }
 
 
 #' Time-series cross-validation
-#' 
-#' Performs time-series cross-validation on a model. 
-#' 
-#' Not tested yet. 
-#' @param model is the model on which to perform the time-series cross-validation. 
-#' @param data is the data on which to perform the cross-validation and provide good measures for. 
-#' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed. 
+#'
+#' Performs time-series cross-validation on a model.
+#'
+#' Not tested yet.
+#' @param model is the model on which to perform the time-series cross-validation.
+#' @param data is the data on which to perform the cross-validation and provide good measures for.
+#' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed.
 #' @param target is the name of the target variable. Can be \code{NULL} if \code{formula_} is specified.
 #' @param predictors is a vector of the names of the predictors. Can be \code{NULL} if \code{formula_} is specified.
-#' @param start_index is the first index to perform the CV from. Default is 3 (not reasonable to start from 2 and forward). 
-#' @param error_measure_function is the error function with which one measures the generalization error. 
-#' @param ... are additional model parameters. 
+#' @param start_index is the first index to perform the CV from. Default is 3 (not reasonable to start from 2 and forward).
+#' @param error_measure_function is the error function with which one measures the generalization error.
+#' @param ... are additional model parameters.
 #' @export
 time_series_cv = function(model, data, formula_ = NULL, target = NULL, predictors = NULL, start_index = 3, error_measure_function, ...) {
-  
-  
+
+
   error = as.numeric()
-  
+
   for (i in start_index:nrow(data)) {
     train = data[1:(i-1),]
     validation = data[i,]
-    
+
     if (!is.null(formula_)) {
       fit = model(formula_, train,...)
       error[i] = error_measure_function(validation[,target],predict(fit,validation))
@@ -590,7 +593,7 @@ time_series_cv = function(model, data, formula_ = NULL, target = NULL, predictor
       fit = model(x=train[,predictors],y=train[,target],...)
       error[i] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
     }
-    
+
   }
   cv_results = list()
   if (!is.null(formula_)) {
@@ -598,36 +601,36 @@ time_series_cv = function(model, data, formula_ = NULL, target = NULL, predictor
   } else {
     cv_results$formula = get_formula(target, predictors)
   }
-  
+
   cv_results$error = error
   cv_results$avg_error = mean(error)
   cv_results$folds = data_splits
-  
+
   return(cv_results)
-  
+
 }
 
 
-#' Leave one out Cross-Validation
-#' 
-#' Performs Leave-One-Out Cross-validation on the dataset given. 
-#' 
-#' Not tested yet. 
-#' @param model is the model on which to perform the time-series cross-validation. 
-#' @param data is the data on which to perform the cross-validation and provide good measures for. 
-#' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed. 
+#' Leave-one-out Cross-Validation
+#'
+#' Performs Leave-One-Out Cross-validation on the dataset given.
+#'
+#' Not tested yet.
+#' @param model is the model on which to perform the time-series cross-validation.
+#' @param data is the data on which to perform the cross-validation and provide good measures for.
+#' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed.
 #' @param target is the name of the target variable. Can be \code{NULL} if \code{formula_} is specified.
 #' @param predictors is a vector of the names of the predictors. Can be \code{NULL} if \code{formula_} is specified.
-#' @param error_measure_function is the error function with which one measures the generalization error. 
-#' @param ... are additional model parameters. 
+#' @param error_measure_function is the error function with which one measures the generalization error.
+#' @param ... are additional model parameters.
 #' @export
 leave_one_out_cv = function(model, data, formula_, target = NULL, predictors = NULL, error_measure_function, ...) {
   error = as.numeric()
-  
+
   for (i in 1:nrow(data)) {
     train = data[-i,]
     validation = data[i,]
-    
+
     if (!is.null(formula_)) {
       fit = model(formula_, train,...)
       error[i] = error_measure_function(validation[,target],predict(fit,validation))
@@ -635,7 +638,7 @@ leave_one_out_cv = function(model, data, formula_, target = NULL, predictors = N
       fit = model(x=train[,predictors],y=train[,target],...)
       error[i] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
     }
-    
+
   }
   cv_results = list()
   if (!is.null(formula_)) {
@@ -643,10 +646,84 @@ leave_one_out_cv = function(model, data, formula_, target = NULL, predictors = N
   } else {
     cv_results$formula = get_formula(target, predictors)
   }
-  
+
   cv_results$error = error
   cv_results$avg_error = mean(error)
   cv_results$folds = data_splits
-  
+
   return(cv_results)
+}
+
+
+#' Distribution plot
+#'
+#' Plots the distribution of data.
+#' @param x is the vector of data to plot.
+#' @param ... are additional parameters to the \code{hist} function.
+#' @export
+dist_plot = function(x, ...) {
+  hist(x, freq = FALSE, ...)
+  lines(density(x), lwd = 4, col = "red")
+}
+
+
+#' Get skewness
+#'
+#' Get the skewness of all variables in a data set.
+#' @param data is the data frame for which to obtain the skews.
+#' @param skewed_threshold is the absolute threshold value. Default is 1, meaning all variable having \code{abs(skewness(variable)) > 1} will be returned.
+#' @export
+get_skewed_vars = function(data, skewed_threshold = 1) {
+  library(e1071)
+  is_not_bin = c()
+  for (i in 1:ncol(data)) {
+    if (any(!(names(table(data[,i])) %in% c("0","1"))) & abs(skewness(data[!is.na(data[,i]),i])) > skewed_threshold) {
+      is_not_bin[i] = skewness(data[,i])
+      names(is_not_bin)[i] = colnames(data)[i]
+    }
+  }
+
+  is_not_bin = is_not_bin[!is.na(is_not_bin)]
+  return(is_not_bin)
+}
+
+#' Plot imputation effect
+#'
+#' Plots a what-if scenario and compares the scenarios what the distribution would look like if
+#' @param feature is the feature to impute for.
+#' @param impute_func is the function to use for imputation. Takes in, by default, all the non-NA feature values.
+#' @param ... are additional values to \code{impute_func}.
+#' @export
+plot_imputation_effect = function(feature, impute_func = median,...) {
+  par(mfrow = c(2,1))
+  hist(feature, freq = F, ylim = c(0, max(density(feature[!is.na(feature)])$y)), col = "blue", breaks = 100, main = "Before imputing median to null vals")
+  lines(density(feature[!is.na(feature)]), lwd = 3, col = "red")
+  abline(v = median(feature[!is.na(feature)]), lwd = 3, col = "green")
+  feature[is.na(feature)] = impute_func(feature[!is.na(feature)],...)
+  hist(feature, freq = F, ylim = c(0, max(density(feature[!is.na(feature)])$y)), col = "blue", breaks = 100, main = "After imputing median to null vals")
+  lines(density(feature[!is.na(feature)]), lwd = 3, col = "red")
+  abline(v = median(feature[!is.na(feature)]), lwd = 3, col = "green")
+  par(mfrow = c(1,1))
+}
+
+
+#' Replacer
+#'
+#' Replaces values in a a vector \code{column} with values in a corresponding vector \code{ranking}.
+#' @param column is the vector to replace values for.
+#' @param ranking
+#' @param corresponding is the vector with values to replace.
+#' @param NA_val is the value to replace \code{NA}-values with. Default is \code{NA}, meaning they are not replaced.
+#' @export
+replace_vals = function(column, ranking, corresponding, NA_val = NA) {
+  return(apply(as.matrix(column), 1, function(val) {
+    if(is.na(val)) {
+      return(NA_val)
+    } else if (val %in% ranking) {
+      return(corresponding[which(ranking == val)])
+    } else {
+      warning(paste("Note: Value",val,"not found in corresponding vector."))
+      return(val)
+    }
+  }))
 }

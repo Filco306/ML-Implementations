@@ -6,9 +6,6 @@
 \usage{
 MAE(y_true, y_pred)
 }
-\arguments{
-\item{y_true}{}
-}
 \description{
 Returns the MAE, given true and predicted values.
 }

@@ -1,9 +1,9 @@
 #' MAE
-#' 
-#' Returns the MAE, given true and predicted values. 
-#' 
+#'
+#' Returns the MAE, given true and predicted values.
+#'
 #' NOT tested yet!
-#' @param y_true 
+#' @param y_true
 #' @param y_pred
 #' @export
 MAE = function(y_true, y_pred) {
@@ -11,11 +11,11 @@ MAE = function(y_true, y_pred) {
 }
 
 #' MSE
-#' 
-#' Returns the MSE, given true and predicted values. 
-#' 
+#'
+#' Returns the MSE, given true and predicted values.
+#'
 #' NOT tested yet!
-#' @param y_true 
+#' @param y_true
 #' @param y_pred
 #' @export
 MSE = function(y_true, y_pred) {
@@ -23,11 +23,11 @@ MSE = function(y_true, y_pred) {
 }
 
 #' RMSE
-#' 
-#' Returns the RMSE, given true and predicted values. 
-#' 
+#'
+#' Returns the RMSE, given true and predicted values.
+#'
 #' NOT tested yet!
-#' @param y_true 
+#' @param y_true
 #' @param y_pred
 #' @export
 RMSE = function(y_true, y_pred) {
@@ -38,7 +38,7 @@ RMSE = function(y_true, y_pred) {
 #' MAPE
 #'
 #' Calculates the MAPE value for predictions.
-#' 
+#'
 #' NOT tested yet!
 #' @param y is a vector of the actual values.
 #' @param y_hat is a vector of the predictions.
@@ -50,7 +50,7 @@ MAPE = function(y, y_hat) {
 #' wMAPE
 #'
 #' Calculates the wMAPE value for predictions. The wMAPE is calculated as \deqn{(\Sigma |y[i] - y_hat[i]|)/(\Sigma y[i])}
-#' 
+#'
 #' NOT tested yet!
 #' @param y is a vector of the actual values.
 #' @param y_hat is a vector of the predictions.
@@ -62,19 +62,30 @@ wMAPE = function(y, y_hat) {
 #' MASE
 #'
 #' Calculates the MASE value for predictions. The MASE value can be calculated as \deqn{(\Sigma |y[i] - y_hat[i]|)/(\Sigma |y_[t] - y[t-1]|)}
-#' 
-#' Due to the equation of the MASE, the prediction for the first point is not included. 
+#'
+#' Due to the equation of the MASE, the prediction for the first point is not included.
 #' NOT tested yet!
 #' @param y is a vector of the actual values.
 #' @param y_hat is a vector of the predictions.
 #' @export
 MASE = function(y, y_hat) {
   MASEs = as.numeric()
-  
+
   upper = sum(y[2:length(y)] - y_hat[2:length(y)])
   for (i in 2:length(y)) {
     MASEs[i-1] = abs(y[i] - y[i-1])
   }
-  
+
   return(upper/sum(MASEs))
+}
+
+
+#' Root Mean-squared logarithmic error
+#'
+#' @param y are the true value
+#' @param y_hat are the predictions
+#' @param logged is whether the vector are already logged or not. Default \code{FALSE}.
+#' @export
+RMSLE = function(y, y_hat, logged = FALSE) {
+  return(sqrt(MSE(y*(logged == TRUE) + log(y)*(logged == FALSE), y_hat*(logged == TRUE) + y_hat*(logged == FALSE))))
 }

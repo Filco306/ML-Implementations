@@ -1,5 +1,5 @@
 # Create an R package? https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/
-
+rm(list=ls())
 #Send in a data frame and which degree to convert it to. 
 #Returned is a data frame with all features in specified polynomial degree
 #does not return features multiplied with each other
@@ -55,53 +55,23 @@ closedFormSolution <- function(X, y) {
   return(w)
 }
 
-CalculateError = function(w, X, y) {
-  n = length(y)
-  if (is.null(dim(w))) {
-    w = matrix(w, nrow = length(w), ncol = 1)
-  } 
-  
-  if (is.null(dim(y))) {
-    y = matrix(y, nrow = length(y), ncol = 1)
-  }
-  
-  
-  error = sum((y - t(t(w) %*% X))^2)/n
-  return(error)
-}
+# CalculateError = function(w, X, y) {
+#   n = length(y)
+#   if (is.null(dim(w))) {
+#     w = matrix(w, nrow = length(w), ncol = 1)
+#   } 
+#   
+#   if (is.null(dim(y))) {
+#     y = matrix(y, nrow = length(y), ncol = 1)
+#   }
+#   
+#   
+#   error = sum((y - t(t(w) %*% X))^2)/n
+#   return(error)
+# }
 
 
-#Constants is a vector with (degree + 1) constans, i.e. a + bx + cx^2 for degree = 2
-#xSequence is the x interval on which the dots are generated; all dots included
-# var is the variance of the noise
-#Just samples from a normal distribution, but will build in to make it possible to sample with noise from any distribution
-Generate2DimSampleData <- function(n, constants, xMin, xMax, var, integers = FALSE, seed = 123) {
-  library(mvtnorm)
-  y = as.numeric()
-  
-  set.seed(seed)
-  if (integers == TRUE) {
-    xSequence = seq(xMin, xMax, 1)
-    X = sample(x = xSequence, replace = TRUE, size = n)
-  } else {
-    X = runif(n, xMin, xMax)
-  }
-  xSeq = transformFromLin(data.frame(X), length(constants) - 1)
-  
-  ySeq = constants*t(xSeq)
-  ySeq = apply(ySeq, 2, function(column) {
-    return(sum(column))
-  })
-  
-  y = rmvnorm(1, mean = ySeq, sigma = diag(var, length(ySeq), length(ySeq)))
-  y = t(y)
-  frame = data.frame(X, y)
-  print("Best fit (for polynomial used) is ")
-  error = CalculateError(constants, t(xSeq), y)
-  print(error)
-  
-  return(frame)
-}
+
 
 RegressionGradient <- function (w, X, y) {
   y = as.matrix(y)
@@ -154,8 +124,8 @@ for (i in 1:8) {
  lineToDraw = t(w) %*% t(transformFromLin(data.frame(seq(xMin, xMax, 0.1)), i))
  colors = c("red", "green", "blue", "yellow", "purple", "green", "gray", "black")
  Sys.sleep(1.5)
- lines(x = seq(xMin, xMax, 0.1), y = lineToDraw, col = colors[i])
- print(paste("Error is ",CalculateError(w = w, X = t(dataPoints), y = data$y)))
+ lines(x = seq(xMin, xMax, 0.1), y = lineToDraw, col = colors[i], lwd = 3)
+ #print(paste("Error is ",CalculateError(w = w, X = t(dataPoints), y = data$y)))
  
 }
 

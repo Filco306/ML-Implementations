@@ -6,9 +6,6 @@
 \usage{
 RMSE(y_true, y_pred)
 }
-\arguments{
-\item{y_true}{}
-}
 \description{
 Returns the RMSE, given true and predicted values.
 }

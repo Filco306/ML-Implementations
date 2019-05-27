@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{leave_one_out_cv}
 \alias{leave_one_out_cv}
-\title{Leave one out Cross-Validation}
+\title{Leave-one-out Cross-Validation}
 \usage{
 leave_one_out_cv(model, data, formula_, target = NULL,
   predictors = NULL, error_measure_function, ...)

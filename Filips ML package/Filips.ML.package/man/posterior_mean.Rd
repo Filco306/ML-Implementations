@@ -10,5 +10,5 @@ posterior_mean(samples, exclude_zeros = TRUE)
 \item{excludes_zeros}{is a boolean specifying whether the zeros should be excluded for the inference. This should be true (which is default) when using bsts.}
 }
 \description{
-Returns the posterior mean estimate, given a vector of samples
+Returns the posterior mean estimate, given a vector of samples from the posterior distribution.
 }
