@@ -1,5 +1,5 @@
 Package: Filips.ML.package
-Title: What the Package Does (one line, title case)
+Title: Filip's Machine Learning package, implementing useful functions
 Version: 0.0.0.9000
 Authors@R: person("Filip", "Cornell", email = "c.filip.cornell@gmail.com", role = c("aut", "cre"))
 Description: A collection of ML functions, implemented for fun. 

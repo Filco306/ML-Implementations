@@ -1,6 +1,6 @@
 #' crossValidationSplits
 #'
-#' Splits the data into k partitions, which can later be used together with the function "CVtrainAndTestSet"
+#' Splits the data into k partitions, which can later be used together with the function \code{CVtrainAndTestSet}
 #'
 #' @param dataSet is the set of data to split up into. Make sure samples are the rows and the columns are the features.
 #' @param k is the number to splits to partition the data into.
@@ -51,7 +51,6 @@ crossValidationSplits <- function(dataSet, k, seed = NULL) {
 #'
 #'
 #'
-
 trainTestSplit <- function(dataSet, labels, testSetFraction, seed = NULL) {
 
   smp_size <- floor((1 - testSetFraction) * nrow(dataSet))
@@ -405,13 +404,16 @@ holdout_method = function(data, train_partition = 0.75, seed = NULL) {
 #' @keywords loss, matrix, binary, classification
 #' @export
 loss_binary_classification = function(FP_punishment, FN_punishment, probabilities) {
-  if (dim(probabilities)[2] == 2) {
+  if (is.null(dim(probabilities)[2])) {
+    probs_positive = probabilities
+  } else if (dim(probabilities)[2] == 2) {
     probs_positive = probabilities[,2]
   } else {
     probs_positive = probabilities
   }
-  return(apply(as.matrix(probs_positive, 1, function(row) {
+  return(as.integer(apply(as.matrix(probs_positive), 1, function(row) {
     losses = c(FN_punishment*row, FP_punishment*(1 - row))
+    return(which.min(losses))
   })))
 }
 
@@ -514,7 +516,7 @@ create_dummy_vars = function(data, col_name, NA_val = NA) {
 #' Not tested yet.
 #' @param model is the model function sent in onto which the cross-validation should be performed.
 #' @param data is the data given to split up
-#' @param error_measure_function is the error function with which one measures the generalization error.
+#' @param error_measure_function is the error function with which one measures the generalization error. Should take in \code{y_true} and \code{y_preds}.
 #' @param formula_ is the formula to pass to the model function. \code{NULL} by default, and if it is \code{NULL}, \code{target} and \code{predictors} must be passed.
 #' @param target is the name of the target variable. Is NULL by default under assumption that formula exists.
 #' @param predictors is a vector of the names of the predictors. Is NULL by default under assumption that formula exists.
@@ -532,7 +534,7 @@ k_fold_cv = function(model, data, error_measure_function, formula_ = NULL, targe
 
   }
 
-  error = as.numeric()
+  error = list()
   for (i in 1:n_folds) {
     train_validation = CVtrainAndValidationSet(data_splits, splitIndex = i)
     train = train_validation[[1]]
@@ -540,11 +542,13 @@ k_fold_cv = function(model, data, error_measure_function, formula_ = NULL, targe
 
     if (!is.null(formula_)) {
       fit = model(formula_, train,...)
-      error[i] = error_measure_function(validation[,target],predict(fit,validation))
+      error[[i]] = error_measure_function(validation[,target],predict(fit,validation))
     } else {
       fit = model(x=train[,predictors],y=train[,target],...)
-      error[i] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
+      error[[i]] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
     }
+
+    if (verbose) print(paste("Fold",i))
 
   }
 
@@ -580,7 +584,7 @@ k_fold_cv = function(model, data, error_measure_function, formula_ = NULL, targe
 time_series_cv = function(model, data, formula_ = NULL, target = NULL, predictors = NULL, start_index = 3, error_measure_function, ...) {
 
 
-  error = as.numeric()
+  error = list()
 
   for (i in start_index:nrow(data)) {
     train = data[1:(i-1),]
@@ -588,10 +592,10 @@ time_series_cv = function(model, data, formula_ = NULL, target = NULL, predictor
 
     if (!is.null(formula_)) {
       fit = model(formula_, train,...)
-      error[i] = error_measure_function(validation[,target],predict(fit,validation))
+      error[[i]] = error_measure_function(validation[,target],predict(fit,validation))
     } else {
       fit = model(x=train[,predictors],y=train[,target],...)
-      error[i] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
+      error[[i]] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
     }
 
   }
@@ -625,7 +629,7 @@ time_series_cv = function(model, data, formula_ = NULL, target = NULL, predictor
 #' @param ... are additional model parameters.
 #' @export
 leave_one_out_cv = function(model, data, formula_, target = NULL, predictors = NULL, error_measure_function, ...) {
-  error = as.numeric()
+  error = list()
 
   for (i in 1:nrow(data)) {
     train = data[-i,]
@@ -633,10 +637,10 @@ leave_one_out_cv = function(model, data, formula_, target = NULL, predictors = N
 
     if (!is.null(formula_)) {
       fit = model(formula_, train,...)
-      error[i] = error_measure_function(validation[,target],predict(fit,validation))
+      error[[i]] = error_measure_function(validation[,target],predict(fit,validation))
     } else {
       fit = model(x=train[,predictors],y=train[,target],...)
-      error[i] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
+      error[[i]] = error_measure_function(validation[,target],predict(fit,validation[,predictors]))
     }
 
   }
